@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -58,24 +59,28 @@ namespace TechJobsConsole
             return jobs;
         }
 
-        public static List<Dictionary<string, string>> FindByValue(string column, string value)
+        public static List<Dictionary<string, string>> FindByValue(string searchTerm)
         {
             // load data, if not already loaded
             LoadData();
-
+            HashSet<Dictionary<string, string>> NonDuplicateAllJobs = new HashSet<Dictionary<string, string>>();
             List<Dictionary<string, string>> jobs = new List<Dictionary<string, string>>();
 
             foreach (Dictionary<string, string> job in AllJobs)
             {
                 foreach (string key in job.Keys)
                 {
-                    //string aValue = row[column];
-
-                    if (job[key].ToUpper().Contains(value.ToUpper()))
+                    
+                    if (job[key].IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        jobs.Add(job);
+                        NonDuplicateAllJobs.Add(job);
                     }
                 }
+            }
+
+            foreach (Dictionary<string, string> job in NonDuplicateAllJobs)
+            {
+                jobs.Add(job);
             }
 
             return jobs;
